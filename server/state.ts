@@ -1,0 +1,2 @@
+import {db,config,json,order} from './shared';
+export async function GET(){try{const cfg=await config();const rows=await db().prepare("SELECT * FROM requests WHERE status NOT IN ('delivered','cancelled') OR id IN (SELECT id FROM requests WHERE status IN ('delivered','cancelled') ORDER BY updated DESC LIMIT 300) ORDER BY created DESC").all();return json({config:cfg,orders:rows.results.map(order),serverTime:Date.now()})}catch{return json({error:'Не удалось загрузить заявки. Проверьте соединение.'},503)}}
