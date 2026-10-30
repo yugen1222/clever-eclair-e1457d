@@ -148,11 +148,14 @@ export const defaults:Config={zones:{'1':['Бар','Магазин'],'2':[],'3':
 export function active(o:Order){return !['delivered','cancelled'].includes(o.status)}
 export function demoOrders():Order[]{const now=Date.now();return [
 {floor:1,zone:'Бар',items:[{id:'cup',name:'Чашки',qty:12},{id:'bar-teapot-saucer',name:'Блюдца под чайники',qty:12}],status:'new',runner:'',urgent:0,comment:'Для подачи чая',age:95},
-{floor:1,zone:'Магазин',items:[{id:'plate-main',name:'Сервировочные тарелки большие',qty:20},{id:'fork',name:'Сервировочные вилки',qty:20}],status:'assigned',runner:'',urgent:0,comment:'',age:220},
+{floor:1,zone:'Магазин',items:[{id:'plate-main',name:'Сервировочные тарелки большие',qty:20},{id:'plate-dessert',name:'Сервировочные тарелки маленькие',qty:20}],status:'assigned',runner:'',urgent:0,comment:'',age:220},
 {floor:3,zone:'Зона B',items:[{id:'plate-dessert',name:'Сервировочные тарелки маленькие',qty:15},{id:'teaspoon',name:'Ложки для чая',qty:15}],status:'new',runner:'',urgent:1,comment:'Закончились в зоне',age:360},
 {floor:3,zone:'Бар',items:[{id:'bar-glass-03',name:'Стаканы 0,3',qty:10}],status:'assigned',runner:'',urgent:0,comment:'',age:140}
 ].map((r,i)=>({...r,id:'example-'+(i+1),created:now-r.age*1000,updated:now,version:1,events:[{at:now-r.age*1000,text:'Заявка создана'}]}))}
 
 export function upgradeConfig(c:Config):Config{const next=(c.catalogVersion||0)<2?{...c,dishes:defaults.dishes,catalogVersion:2}:c;return {...next,zones:{...next.zones,'2':[]},runners:[]}}
 export function canTransition(current:string,next:string){return ({new:['assigned','cancelled'],assigned:['delivered','cancelled'],transit:['delivered','cancelled'],delivered:[],cancelled:[]} as Record<string,string[]>)[current]?.includes(next)||false}
-export function zoneDishes(c:Config,zone:string){const bar=zone.trim().toLocaleLowerCase("ru-RU")==="бар";return c.dishes.filter(d=>!d.scope||d.scope===(bar?"bar":"service"))}
+export function zoneDishes(c:Config,zone:string){
+ const normalized=zone.trim().toLocaleLowerCase("ru-RU"),bar=normalized==="бар",shop=normalized==="магазин";
+ return c.dishes.filter(d=>(!d.scope||d.scope===(bar?"bar":"service"))&&(!shop||["plate-main","plate-dessert"].includes(d.id)||d.category.trim().toLocaleLowerCase("ru-RU")==="тарелки"));
+}

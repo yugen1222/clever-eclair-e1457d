@@ -10,6 +10,9 @@ test('Catalogue uses separate service and bar sets, and upgrades old settings',(
  assert.equal(defaults.dishes.length,20);assert.equal(zoneDishes(defaults,'Бар').length,10);assert.equal(zoneDishes(defaults,'Зона A').length,10);
  assert.ok(zoneDishes(defaults,'Бар').some(d=>d.name==='Чашки для эспрессо'));
  assert.ok(!zoneDishes(defaults,'Магазин').some(d=>d.name==='Чашки для эспрессо'));
+ assert.deepEqual(zoneDishes(defaults,'  МАГАЗИН  ').map(d=>d.id),['plate-main','plate-dessert']);
+ const renamed={...defaults,dishes:defaults.dishes.map(d=>({...d,name:'Изменённое название'}))};
+ assert.deepEqual(zoneDishes(renamed,'Магазин').map(d=>d.id),['plate-main','plate-dessert']);
  const c=upgradeConfig({...defaults,catalogVersion:undefined,runners:['Тест'],critical:9});
  assert.deepEqual(c.runners,[]);assert.equal(c.critical,9);assert.equal(c.catalogVersion,2);
 });

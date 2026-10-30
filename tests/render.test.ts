@@ -31,6 +31,11 @@ test('Render HTTP server shares requests across devices, validates versions and 
   data=await (await call('/api/state')).json();assert.equal(data.orders[0].status,'delivered');assert.equal(data.orders[0].runner,'');
   assert.equal((await call('/api/config','PUT',{...defaults,warning:4,critical:7})).status,200);
   data=await (await call('/api/state')).json();assert.equal(data.config.warning,4);
+  const shop={id:'render-shop-request-001',floor:1,zone:'Магазин',items:[{id:'spoon',qty:5}]};
+  assert.equal((await call('/api/requests','POST',shop)).status,400);
+  assert.equal((await call('/api/requests','POST',{...shop,items:[{id:'plate-main',qty:5},{id:'plate-dessert',qty:10}]})).status,200);
+  data=await (await call('/api/state')).json();
+  assert.deepEqual(data.orders.find((o:any)=>o.id===shop.id).items.map((i:any)=>i.id),['plate-main','plate-dessert']);
   assert.equal((await call('/api/missing')).status,404);
  }finally{
   await new Promise<void>((resolve,reject)=>server.close(error=>error?reject(error):resolve()));
