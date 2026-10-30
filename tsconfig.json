@@ -21,7 +21,6 @@
   "include": [
     "src",
     "server",
-    "netlify/functions",
     "tests"
   ]
 }

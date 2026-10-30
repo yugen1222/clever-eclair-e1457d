@@ -1,6 +1,6 @@
 {
-  "name": "safia-dishes-netlify",
-  "version": "2.3.0",
+  "name": "safia-dishes-render",
+  "version": "3.0.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -9,13 +9,14 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "check": "tsc --noEmit",
-    "test": "node --import tsx --test tests/*.test.ts"
+    "test": "node --import tsx --test tests/*.test.ts",
+    "start": "node dist-server/server.mjs"
   },
   "dependencies": {
-    "@netlify/database": "2.0.1",
     "react": "19.2.6",
     "react-dom": "19.2.6",
-    "lucide-react": "1.31.0"
+    "lucide-react": "1.31.0",
+    "pg": "8.23.1"
   },
   "devDependencies": {
     "esbuild": "0.25.12",
@@ -24,6 +25,7 @@
     "@types/react-dom": "19.2.3",
     "@types/node": "22.19.19",
     "tsx": "4.20.6",
-    "@electric-sql/pglite": "0.3.14"
+    "@electric-sql/pglite": "0.3.14",
+    "@types/pg": "8.23.1"
   }
 }

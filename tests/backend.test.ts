@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {PGlite} from '@electric-sql/pglite';
 import {Prepared} from '../server/database';
-import handler from '../netlify/functions/api.mts';
+import handler from '../server/api';
 import {defaults,zoneDishes,upgradeConfig,canTransition} from '../src/model';
 
 test('Catalogue uses separate service and bar sets, and upgrades old settings',()=>{
@@ -23,7 +23,7 @@ test('Open device access works with no configured code and no cookies',async()=>
 });
 test('Postgres adapter preserves idempotency, shared state and optimistic locking',async()=>{
  const pg=new PGlite();try{
- await pg.exec(await readFile('netlify/database/migrations/0001_dish_requests.sql','utf8'));
+ await pg.exec(await readFile('migrations/0001_dish_requests.sql','utf8'));
  const prepare=(sql:string)=>new Prepared(sql,async(q,v)=>(await pg.query(q,v)).rows);
  const insert=prepare('INSERT OR IGNORE INTO requests (id,floor,zone,items,status,runner,urgent,comment,created,updated,version,events) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)');
  const values=['test-request',1,'Магазин','[]','new','',0,'',Date.now(),Date.now(),1,'[]'];
